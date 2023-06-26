@@ -39,11 +39,19 @@ class Seller(Agent):
     A Seller refers to an agent with the goal of selling objects.
     """
 
-    def __init__(self, name, inventory, min_price):
+    def __init__(
+            self,
+            name,
+            inventory,
+            min_price
+    ):
         super().__init__(name, inventory)
         self.min_price = min_price
 
-    def make_trade(self, market):
+    def make_trade(
+            self,
+            market
+    ):
         if self.inventory > 0:
             buyers = market.get_buyers()
             if buyers:
@@ -61,11 +69,19 @@ class Buyer(Agent):
     A Buyer refers to an agent with the goal of buying objects.
     """
 
-    def __init__(self, name, inventory, max_budget):
+    def __init__(
+            self,
+            name,
+            inventory,
+            max_budget
+    ):
         super().__init__(name, inventory)
         self.max_budget = max_budget
 
-    def make_trade(self, market):
+    def make_trade(
+            self,
+            market
+    ):
         if self.inventory > 0 and self.max_budget > 0:
             sellers = market.get_sellers()
             if sellers:
