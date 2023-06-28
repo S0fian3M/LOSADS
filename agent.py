@@ -9,7 +9,7 @@ class Agent:
     def __init__(
             self,
             name: str,
-            inventory
+            inventory: int
     ):
         """
         Instantiate the agent.
@@ -19,16 +19,6 @@ class Agent:
         self.name = name
         self.inventory = inventory
 
-    def make_trade(
-            self,
-            market
-    ):
-        """
-        When the agent trades.
-        :param market:
-        :return:
-        """
-        pass
 
     def __str__(self):
         return f"{self.name}: {self.inventory}"
@@ -48,21 +38,6 @@ class Seller(Agent):
         super().__init__(name, inventory)
         self.min_price = min_price
 
-    def make_trade(
-            self,
-            market
-    ):
-        if self.inventory > 0:
-            buyers = market.get_buyers()
-            if buyers:
-                buyer = random.choice(buyers)
-                quantity = min(self.inventory, buyer.inventory)
-                total_cost = self.min_price * quantity
-
-                self.inventory -= quantity
-                buyer.inventory -= quantity
-                market.record_trade(self, buyer, quantity, total_cost)
-
 
 class Buyer(Agent):
     """
@@ -73,23 +48,9 @@ class Buyer(Agent):
             self,
             name,
             inventory,
+            money,
             max_budget
     ):
         super().__init__(name, inventory)
+        self.money = money
         self.max_budget = max_budget
-
-    def make_trade(
-            self,
-            market
-    ):
-        if self.inventory > 0 and self.max_budget > 0:
-            sellers = market.get_sellers()
-            if sellers:
-                seller = random.choice(sellers)
-                quantity = min(self.inventory, seller.inventory)
-                total_cost = seller.price * quantity
-
-                if self.max_budget >= total_cost:
-                    self.inventory -= quantity
-                    self.max_budget -= total_cost
-                    market.record_trade(seller, self, quantity, total_cost)
