@@ -41,6 +41,7 @@ class Seller(Agent):
         self.money = money
         self.min_price = min_price
         self.price_expectation = price_expectation
+        self.has_recently_sold = False
 
 
 class Buyer(Agent):
@@ -60,3 +61,4 @@ class Buyer(Agent):
         self.money = money
         self.max_budget = max_budget
         self.price_expectation = price_expectation
+        self.has_recently_bought = False

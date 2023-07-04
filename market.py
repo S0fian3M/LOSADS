@@ -41,13 +41,13 @@ class Market:
             name = f"Seller {i + 1}"
             inventory = random.randint(1, 5)
             min_price = random.randint(3, 8)
-            self.sellers.append(Seller(name, inventory, min_price))
+            self.sellers.append(Seller(name, inventory, 0, min_price, min_price + random.randint(1, 5)))
 
         for i in range(nb_buyers):
             name = f"Buyer {i + 1}"
             inventory = 0
             max_budget = random.randint(3, 10)
-            self.buyers.append(Buyer(name, inventory, 10, max_budget))
+            self.buyers.append(Buyer(name, inventory, 10, max_budget, max_budget + random.randint(1, 5)))
 
     def record_trade(
             self,
@@ -63,7 +63,7 @@ class Market:
         Get Sellers.
         :return: List of active Sellers.
         """
-        return [seller for seller in self.sellers if seller.inventory > 0]
+        return [seller for seller in self.sellers if seller.inventory > 0 and seller.has_recently_sold is True]
 
     def get_active_buyers(self):
         """
@@ -80,6 +80,10 @@ class Market:
         return random.shuffle(self.sellers + self.buyers)
 
     def check_market_activity(self):
+        """
+        Check whether some agents are still active
+        :return:
+        """
         return len(self.get_active_sellers()) > 0 and len(self.get_active_buyers()) > 0
 
     def run_trades(self):
@@ -91,8 +95,10 @@ class Market:
             if not self.check_market_activity():
                 print("Market is inactive.")
                 break
+            # Do all trades during a day
             for i in range(self.nb_trades_per_day):
                 self.make_trades()
+            self.update_price_expectations()
 
     def make_trades(self):
         """
@@ -107,9 +113,13 @@ class Market:
 
                 if trade_price is not None:
                     seller.inventory -= 1
-                    buyer.inventory += 1
                     seller.money += trade_price
+                    seller.has_recently_sold = True
+
+                    buyer.inventory += 1
                     buyer.money -= trade_price
+                    buyer.has_recently_bought = True
+
                     self.record_trade(seller, buyer, 1, trade_price)
 
     @staticmethod
@@ -128,6 +138,23 @@ class Market:
         if buyer.price_expectation == seller.price_expectation:
             return buyer.price_expectation
         return None
+
+    def update_price_expectations(self):
+        """
+        All agents update their price expectations at the end of the day
+        :return:
+        """
+        for buyer in self.buyers:
+            if buyer.has_recently_bought:
+                buyer.price_expectation += 1
+            else:
+                buyer.price_expectation = min(1, buyer.price_expectation - 1)
+
+        for seller in self.sellers:
+            if seller.has_recently_sold:
+                seller.price_expectation += 1
+            else:
+                seller.price_expectation = min(1, seller.price_expectation - 1)
 
     def print_trades(self):
         """
