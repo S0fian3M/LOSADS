@@ -8,13 +8,18 @@ class Market:
     A market is the place where Buyers purchases objects from Sellers.
     """
 
-    def __init__(self):
+    def __init__(
+            self,
+            nb_trades_per_day
+    ):
         """
         Instantiate the market
+        :param nb_trades_per_day:
         """
         self.sellers = []
         self.buyers = []
         self.trades = []
+        self.nb_trades_per_day = nb_trades_per_day
 
     def populate_market(
             self,
@@ -28,17 +33,17 @@ class Market:
         :return:
         """
         if nb_sellers == 0:
-            num_sellers = random.randint(2, 2)
+            nb_sellers = random.randint(2, 2)
         if nb_buyers == 0:
-            num_buyers = random.randint(2, 2)
+            nb_buyers = random.randint(2, 2)
 
-        for i in range(num_sellers):
+        for i in range(nb_sellers):
             name = f"Seller {i + 1}"
             inventory = random.randint(1, 5)
             min_price = random.randint(3, 8)
             self.sellers.append(Seller(name, inventory, min_price))
 
-        for i in range(num_buyers):
+        for i in range(nb_buyers):
             name = f"Buyer {i + 1}"
             inventory = 0
             max_budget = random.randint(3, 10)
@@ -86,38 +91,43 @@ class Market:
             if not self.check_market_activity():
                 print("Market is inactive.")
                 break
-
-            self.make_trades()
+            for i in range(self.nb_trades_per_day):
+                self.make_trades()
 
     def make_trades(self):
         """
-        Make all trades.
+        For each buyer, try to trade.
         :return:
         """
-        for seller in self.get_active_sellers():
-            buyers = self.get_active_buyers()
-            if buyers:
-                buyer = random.choice(buyers)
-                total_cost = self.get_trade_price(buyer.max_budget, seller.min_price)
+        for buyer in self.get_active_buyers():
+            sellers = self.get_active_sellers()
+            if sellers:
+                seller = random.choice(sellers)
+                trade_price = self.get_trade_price(buyer.max_budget, seller.min_price)
 
-                seller.inventory -= 1
-                buyer.inventory += 1
-                buyer.max_budget -= total_cost
-                self.record_trade(seller, buyer, 1, total_cost)
+                if trade_price is not None:
+                    seller.inventory -= 1
+                    buyer.inventory += 1
+                    seller.money += trade_price
+                    buyer.money -= trade_price
+                    self.record_trade(seller, buyer, 1, trade_price)
 
     @staticmethod
     def get_trade_price(
-            proposal_1: int,
-            proposal_2: int
+            buyer: Buyer,
+            seller: Seller
     ):
         """
-        For now, the trade price will be the minimum of 2 proposals.
+        For now, trades occur only if both price expectations are equal.
         TODO: N proposals, luck factor, complexity if items have more characteristics
-        :param proposal_1:
-        :param proposal_2:
+        :param buyer:
+        :param seller:
         :return:
         """
-        return min(proposal_1, proposal_2)
+        # If the buyer can not afford the item, return None
+        if buyer.price_expectation == seller.price_expectation:
+            return buyer.price_expectation
+        return None
 
     def print_trades(self):
         """

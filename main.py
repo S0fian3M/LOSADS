@@ -1,10 +1,8 @@
-import random
-
 from market import Market
-from agent import Seller, Buyer
+
 
 def main():
-    market = Market()
+    market = Market(3)
     market.populate_market()
 
     market.run_trades()

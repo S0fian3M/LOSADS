@@ -33,10 +33,14 @@ class Seller(Agent):
             self,
             name,
             inventory,
-            min_price
+            money,
+            min_price,
+            price_expectation
     ):
         super().__init__(name, inventory)
+        self.money = money
         self.min_price = min_price
+        self.price_expectation = price_expectation
 
 
 class Buyer(Agent):
@@ -49,8 +53,10 @@ class Buyer(Agent):
             name,
             inventory,
             money,
-            max_budget
+            max_budget,
+            price_expectation
     ):
         super().__init__(name, inventory)
         self.money = money
         self.max_budget = max_budget
+        self.price_expectation = price_expectation
