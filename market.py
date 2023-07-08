@@ -56,6 +56,14 @@ class Market:
             quantity,
             price
     ):
+        """
+        Record a trade between two agents
+        :param seller:
+        :param buyer:
+        :param quantity:
+        :param price:
+        :return:
+        """
         self.trades.append((seller, buyer, quantity, price))
 
     def get_active_sellers(self):

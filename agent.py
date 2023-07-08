@@ -4,6 +4,7 @@ import random
 class Agent:
     """
     Agent class interface.
+    TODO: add more complex inventory for different type of objects
     """
 
     def __init__(

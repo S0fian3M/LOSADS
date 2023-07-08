@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 
+
 class MarketVisualizer:
     """
     Visualize the market

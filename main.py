@@ -2,7 +2,11 @@ from market import Market
 
 
 def main():
-    market = Market(3)
+    """
+    Start the market simulation
+    :return:
+    """
+    market = Market(10)
     market.populate_market()
 
     market.run_trades()
