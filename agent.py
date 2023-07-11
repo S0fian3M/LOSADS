@@ -1,6 +1,3 @@
-import random
-
-
 class Agent:
     """
     Agent class interface.
